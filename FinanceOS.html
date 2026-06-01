@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FinanceOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --bg: #080b12;
+  --surface: #0f1420;
+  --surface2: #161d2e;
+  --surface3: #1d2640;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e8eaf6;
+  --muted: #6b7299;
+  --accent1: #5b8dee;
+  --accent2: #00e5b0;
+  --accent3: #ff5c7a;
+  --accent4: #ffb347;
+  --accent5: #a78bfa;
+  --font: 'DM Sans', sans-serif;
+  --font2: 'Syne', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:-30%;left:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(91,141,238,0.06),transparent 70%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;bottom:-20%;right:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(0,229,176,0.05),transparent 70%);pointer-events:none;z-index:0;}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(8,11,18,0.93);backdrop-filter:blur(16px);z-index:100;}
+.logo{font-family:var(--font2);font-size:18px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(120deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:2px;}
+.nav-btn{padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);font-size:12.5px;font-weight:500;color:var(--muted);background:transparent;transition:all 0.2s;display:flex;align-items:center;gap:5px;}
+.nav-btn:hover,.nav-btn.active{background:var(--surface2);color:var(--text);}
+.nav-btn.active{color:var(--accent1);}
+.nav-right{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent5));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;font-family:var(--font2);}
+
+/* MAIN */
+.main{padding:24px 28px;max-width:1380px;margin:0 auto;position:relative;z-index:1;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0;}
+.stat-card.blue::before{background:var(--accent1);}
+.stat-card.teal::before{background:var(--accent2);}
+.stat-card.red::before{background:var(--accent3);}
+.stat-card.amber::before{background:var(--accent4);}
+.stat-card.purple::before{background:var(--accent5);}
+.stat-label{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;}
+.stat-value{font-size:24px;font-weight:700;font-family:var(--font2);}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.stat-sub.up{color:var(--accent2);}
+.stat-sub.down{color:var(--accent3);}
+
+/* PANELS */
+.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;}
+.panel-grid.wide{grid-template-columns:2fr 1fr;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.panel-title{font-size:13px;font-weight:600;font-family:var(--font2);color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.panel-title i{font-size:16px;color:var(--accent1);}
+
+/* FORMS */
+.form-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.form-group{display:flex;flex-direction:column;gap:5px;flex:1;min-width:120px;}
+label{font-size:11.5px;color:var(--muted);font-weight:500;}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--font);font-size:13px;padding:9px 12px;outline:none;transition:border 0.2s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent1);}
+select option{background:var(--surface2);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:9px;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600;transition:all 0.18s;}
+.btn-primary{background:var(--accent1);color:#fff;}
+.btn-primary:hover{opacity:0.88;transform:translateY(-1px);}
+.btn-success{background:var(--accent2);color:#080b12;}
+.btn-success:hover{opacity:0.88;}
+.btn-danger{background:var(--accent3);color:#fff;}
+.btn-danger:hover{opacity:0.88;}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--accent1);color:var(--accent1);}
+.btn-sm{padding:5px 11px;font-size:12px;border-radius:7px;}
+.btn-amber{background:var(--accent4);color:#080b12;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:8px 12px;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);}
+td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--surface2);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600;}
+.badge-food{background:rgba(255,92,122,0.13);color:#ff5c7a;}
+.badge-transport{background:rgba(0,229,176,0.12);color:#00e5b0;}
+.badge-shopping{background:rgba(167,139,250,0.13);color:#a78bfa;}
+.badge-entertainment{background:rgba(255,179,71,0.13);color:#ffb347;}
+.badge-health{background:rgba(91,141,238,0.13);color:#5b8dee;}
+.badge-hotel{background:rgba(91,141,238,0.15);color:#7eb3ff;}
+.badge-savings{background:rgba(0,229,176,0.13);color:#00e5b0;}
+.badge-income{background:rgba(0,229,176,0.15);color:#00e5b0;}
+.badge-other{background:rgba(107,114,153,0.2);color:#6b7299;}
+
+/* PERSON CHIPS */
+.person-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:var(--surface2);border:1px solid var(--border2);font-size:12.5px;margin:3px;cursor:pointer;transition:all 0.2s;}
+.person-chip:hover{border-color:var(--accent3);}
+.person-chip.selected{border-color:var(--accent1);background:rgba(91,141,238,0.12);color:var(--accent1);}
+.person-chip .dot{width:8px;height:8px;border-radius:50%;}
+
+/* SETTLEMENT */
+.split-card{background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid var(--border);}
+.split-name{font-size:13px;font-weight:700;font-family:var(--font2);}
+.split-amount{font-size:17px;font-weight:800;font-family:var(--font2);}
+.split-amount.owes{color:var(--accent3);}
+.split-amount.gets{color:var(--accent2);}
+
+/* PROGRESS */
+.progress-bar{background:var(--surface2);border-radius:10px;height:6px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;border-radius:10px;transition:width 0.6s ease;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--accent2);border-radius:12px;padding:13px 18px;font-size:13px;color:var(--accent2);display:flex;align-items:center;gap:8px;z-index:9999;transform:translateY(80px);opacity:0;transition:all 0.3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* CHARTS */
+.chart-wrap{position:relative;height:240px;width:100%;}
+.chart-wrap-sm{position:relative;height:190px;width:100%;}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.section-title{font-size:20px;font-weight:800;font-family:var(--font2);}
+.section-sub{font-size:12.5px;color:var(--muted);margin-top:2px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:26px;width:90%;max-width:500px;max-height:88vh;overflow-y:auto;}
+.modal-title{font-size:17px;font-weight:800;font-family:var(--font2);margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;}
+.modal-close{width:28px;height:28px;background:var(--surface2);border:none;border-radius:7px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+/* SHARE PANEL */
+.share-option{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;margin-bottom:8px;}
+.share-option:hover{border-color:var(--accent2);}
+.share-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+
+/* INSIGHT */
+.insight-card{background:linear-gradient(135deg,rgba(91,141,238,0.09),rgba(0,229,176,0.06));border:1px solid rgba(91,141,238,0.2);border-radius:14px;padding:16px;margin-bottom:10px;}
+.insight-title{font-size:13px;font-weight:700;font-family:var(--font2);color:var(--accent1);margin-bottom:5px;}
+.insight-text{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+/* GOAL */
+.goal-item{margin-bottom:14px;}
+.goal-header{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;}
+.goal-name{font-weight:600;}
+.goal-amount{color:var(--muted);font-size:11.5px;}
+
+/* EMPTY */
+.empty{text-align:center;padding:36px 16px;color:var(--muted);}
+.empty i{font-size:36px;opacity:0.25;margin-bottom:10px;display:block;}
+
+/* SETTLED ROW */
+.settled-row{opacity:0.4;}
+
+/* NET BALANCE ROW */
+.net-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.net-row:last-child{border-bottom:none;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:10px;}
+
+@media(max-width:768px){
+  .main{padding:14px;}
+  .nav{padding:12px 14px;}
+  .panel-grid,.panel-grid.wide{grid-template-columns:1fr;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .nav-links{gap:0;}
+  .nav-btn{padding:6px 10px;font-size:11px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo">💰 FinanceOS</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="switchSection('overview',this)"><i class="ti ti-layout-dashboard"></i> Overview</button>
+    <button class="nav-btn" onclick="switchSection('expenses',this)"><i class="ti ti-credit-card"></i> Expenses</button>
+    <button class="nav-btn" onclick="switchSection('savings',this)"><i class="ti ti-piggy-bank"></i> Savings</button>
+    <button class="nav-btn" onclick="switchSection('trip',this)"><i class="ti ti-plane"></i> Trip Splitter</button>
+    <button class="nav-btn" onclick="switchSection('insights',this)"><i class="ti ti-bulb"></i> Insights</button>
+  </div>
+  <div class="nav-right">
+    <span id="live-date"></span>
+    <div class="avatar">YO</div>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- ===== OVERVIEW ===== -->
+<div id="section-overview" class="section active">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Good morning, <span id="greeting-name">friend!</span> 👋</div>
+      <div class="section-sub">Your financial snapshot for today</div>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('add-expense')"><i class="ti ti-plus"></i> Add Expense</button>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card teal"><div class="stat-label">Monthly Income</div><div class="stat-value" id="ov-income">₹0</div><div class="stat-sub up" id="ov-income-sub">Set income →</div></div>
+    <div class="stat-card red"><div class="stat-label">Total Spent</div><div class="stat-value" id="ov-spent">₹0</div><div class="stat-sub down" id="ov-spent-sub">This month</div></div>
+    <div class="stat-card blue"><div class="stat-label">Balance Left</div><div class="stat-value" id="ov-balance">₹0</div><div class="stat-sub" id="ov-balance-sub">After expenses</div></div>
+    <div class="stat-card amber"><div class="stat-label">Total Savings</div><div class="stat-value" id="ov-savings">₹0</div><div class="stat-sub up">Growing!</div></div>
+    <div class="stat-card purple"><div class="stat-label" id="ov-trip-dues-label">Trip Dues</div><div class="stat-value" id="ov-trip-dues">₹0</div><div class="stat-sub" id="ov-trip-dues-sub">Pending settlements</div></div>
+  </div>
+  <div class="panel-grid wide">
+    <div class="panel">
+      <div class="panel-title"><i class="ti ti-chart-line"></i> Spending Trend — Last 6 Months</div>
+      <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><i class="ti ti-chart-donut"></i> By Category</div>
+      <div class="chart-wrap-sm"><canvas id="catChart"></canvas></div>
+      <div id="cat-legend" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+    </div>
+  </div>
+  <div class="panel-grid">
+    <div class="panel">
+      <div class="panel-title"><i class="ti ti-clock"></i> Recent Transactions</div>
+      <div id="recent-txns"><div class="empty"><i class="ti ti-receipt"></i>No transactions yet</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><i class="ti ti-target"></i> Savings Goals</div>
+      <div id="overview-goals"></div>
+      <button class="btn btn-ghost btn-sm" onclick="switchSection('savings',null)" style="margin-top:10px;"><i class="ti ti-arrow-right"></i> Manage Goals</button>
+    </div>
+  </div>
+
+  <!-- MY SETTLEMENTS -->
+  <div class="panel" style="margin-bottom:20px;">
+    <div class="panel-title" style="justify-content:space-between;">
+      <span><i class="ti ti-arrows-exchange"></i> My Settlements</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="nav-owner-name" style="font-size:11.5px;color:var(--muted);font-weight:400;font-family:var(--font);"></span>
+        <button class="btn btn-ghost btn-sm" onclick="openModal('set-owner')" style="font-size:11px;padding:3px 9px;"><i class="ti ti-pencil"></i> Change Name</button>
+      </div>
+    </div>
+    <div id="my-settlements-panel"><div class="empty"><i class="ti ti-arrows-exchange"></i>No trips yet</div></div>
+  </div>
+</div>
+
+<!-- ===== EXPENSES ===== -->
+<div id="section-expenses" class="section">
+  <div class="section-header">
+    <div><div class="section-title">Expenses</div><div class="section-sub">Track where your money goes</div></div>
+    <button class="btn btn-primary" onclick="openModal('add-expense')"><i class="ti ti-plus"></i> Add Expense</button>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card red"><div class="stat-label">This Month</div><div class="stat-value" id="exp-month">₹0</div></div>
+    <div class="stat-card amber"><div class="stat-label">Top Category</div><div class="stat-value" id="exp-top-cat" style="font-size:16px;">—</div></div>
+    <div class="stat-card blue"><div class="stat-label">Transactions</div><div class="stat-value" id="exp-count">0</div></div>
+    <div class="stat-card teal"><div class="stat-label">Daily Average</div><div class="stat-value" id="exp-daily">₹0</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title"><i class="ti ti-list"></i> All Transactions
+      <span style="flex:1;"></span>
+      <select id="filter-cat" onchange="renderExpenseTable()" style="width:140px;padding:5px 10px;font-size:12px;">
+        <option value="">All Categories</option>
+        <option>Food</option><option>Transport</option><option>Shopping</option>
+        <option>Entertainment</option><option>Health</option><option>Savings</option><option>Other</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th></th></tr></thead>
+        <tbody id="expense-tbody"><tr><td colspan="5"><div class="empty"><i class="ti ti-receipt"></i>No expenses yet</div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SAVINGS ===== -->
+<div id="section-savings" class="section">
+  <div class="section-header">
+    <div><div class="section-title">Savings & Goals</div><div class="section-sub">Build your financial future</div></div>
+    <button class="btn btn-success" onclick="openModal('add-goal')"><i class="ti ti-plus"></i> New Goal</button>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card teal"><div class="stat-label">Total Saved</div><div class="stat-value" id="sav-total">₹0</div></div>
+    <div class="stat-card blue"><div class="stat-label">Active Goals</div><div class="stat-value" id="sav-goals-count">0</div></div>
+    <div class="stat-card amber"><div class="stat-label">Nearest Goal</div><div class="stat-value" id="sav-nearest" style="font-size:14px;">—</div></div>
+    <div class="stat-card purple"><div class="stat-label">Avg Progress</div><div class="stat-value" id="sav-avg">0%</div></div>
+  </div>
+  <div class="panel" id="goals-panel">
+    <div class="panel-title"><i class="ti ti-target"></i> Your Goals</div>
+    <div id="goals-list"><div class="empty"><i class="ti ti-target"></i>No goals yet. Create your first!</div></div>
+  </div>
+  <div class="panel" style="margin-top:18px;">
+    <div class="panel-title"><i class="ti ti-wallet"></i> Monthly Income Setup</div>
+    <div class="form-row">
+      <div class="form-group"><label>Monthly Income (₹)</label><input type="number" id="income-input" placeholder="e.g. 80000"/></div>
+      <div class="form-group"><label>Monthly Budget (₹)</label><input type="number" id="budget-input" placeholder="e.g. 50000"/></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveIncome()"><i class="ti ti-device-floppy"></i> Save</button>
+  </div>
+</div>
+
+<!-- ===== TRIP SPLITTER ===== -->
+<div id="section-trip" class="section">
+  <div class="section-header">
+    <div><div class="section-title">Trip Expense Splitter ✈️</div><div class="section-sub">Split bills fairly, share results instantly</div></div>
+    <button class="btn btn-primary" onclick="openModal('add-trip')"><i class="ti ti-plus"></i> New Trip</button>
+  </div>
+
+  <div style="margin-bottom:18px;">
+    <div class="form-row" style="align-items:flex-end;">
+      <div class="form-group"><label>Select Trip</label>
+        <select id="trip-select" onchange="loadTrip()"><option value="">— Choose a Trip —</option></select>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openEditTrip()"><i class="ti ti-pencil"></i> Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteCurrentTrip()"><i class="ti ti-trash"></i> Delete</button>
+    </div>
+  </div>
+
+  <div id="trip-content" style="display:none;">
+    <div class="stat-grid">
+      <div class="stat-card amber"><div class="stat-label">Total Spent</div><div class="stat-value" id="trip-total">₹0</div></div>
+      <div class="stat-card blue"><div class="stat-label">People</div><div class="stat-value" id="trip-people-count">0</div></div>
+      <div class="stat-card teal"><div class="stat-label">Per Person (avg)</div><div class="stat-value" id="trip-per-person">₹0</div></div>
+      <div class="stat-card red"><div class="stat-label">Expenses</div><div class="stat-value" id="trip-exp-count">0</div></div>
+    </div>
+
+    <div class="panel-grid">
+      <!-- ADD EXPENSE -->
+      <div class="panel">
+        <div class="panel-title"><i class="ti ti-receipt-2"></i> Add Expense</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2;"><label>Description</label><input type="text" id="trip-exp-desc" placeholder="e.g. Hotel night 1"/></div>
+          <div class="form-group"><label>Amount (₹)</label><input type="number" id="trip-exp-amount" placeholder="0"/></div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Paid By</label>
+          <select id="trip-exp-paidby"></select>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <label style="margin-bottom:0;">Split Among</label>
+            <button class="btn btn-ghost btn-sm" onclick="selectAllPeople()" style="font-size:11px;padding:4px 10px;"><i class="ti ti-users"></i> All</button>
+          </div>
+          <div id="trip-split-people"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px;"><label>Category</label>
+          <select id="trip-exp-cat">
+            <option>Food</option><option>Transport</option><option>Hotel</option>
+            <option>Shopping</option><option>Entertainment</option><option>Other</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="addTripExpense()"><i class="ti ti-plus"></i> Add Expense</button>
+      </div>
+
+      <!-- SETTLEMENT -->
+      <div class="panel">
+        <div class="panel-title"><i class="ti ti-arrows-exchange"></i> Settlement Summary</div>
+        <div id="settlement-list"></div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-success btn-sm" onclick="openModal('share-trip')"><i class="ti ti-share"></i> Share / Generate Report</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPENSE TABLE -->
+    <div class="panel-grid">
+      <div class="panel">
+        <div class="panel-title"><i class="ti ti-list"></i> Trip Expenses</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>What</th><th>Amount</th><th>Paid By</th><th>Split Among</th><th>Status</th><th></th></tr></thead>
+            <tbody id="trip-exp-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><i class="ti ti-chart-pie"></i> Category Breakdown</div>
+        <div class="chart-wrap-sm"><canvas id="tripCatChart"></canvas></div>
+        <div id="trip-cat-legend" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="no-trip-msg" style="text-align:center;padding:60px 20px;color:var(--muted);">
+    <i class="ti ti-plane" style="font-size:48px;opacity:0.18;display:block;margin-bottom:14px;"></i>
+    <div style="font-size:16px;font-weight:700;font-family:var(--font2);">No trip selected</div>
+    <div style="font-size:13px;margin-top:6px;">Create a new trip to start splitting expenses</div>
+  </div>
+</div>
+
+<!-- ===== INSIGHTS ===== -->
+<div id="section-insights" class="section">
+  <div class="section-header">
+    <div><div class="section-title">Insights 📊</div><div class="section-sub">Smart analysis of your spending patterns</div></div>
+    <button class="btn btn-primary" onclick="generateInsights()"><i class="ti ti-refresh"></i> Refresh</button>
+  </div>
+  <div id="insights-list"></div>
+  <div class="panel">
+    <div class="panel-title"><i class="ti ti-chart-bar"></i> Monthly Comparison</div>
+    <div class="chart-wrap"><canvas id="compChart"></canvas></div>
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- === MODALS === -->
+<div id="modal-add-expense" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">Add Expense <button class="modal-close" onclick="closeModal('add-expense')"><i class="ti ti-x"></i></button></div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2;"><label>Description</label><input type="text" id="exp-desc" placeholder="e.g. Lunch at Truffles"/></div>
+      <div class="form-group"><label>Amount (₹)</label><input type="number" id="exp-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Category</label>
+        <select id="exp-cat"><option>Food</option><option>Transport</option><option>Shopping</option><option>Entertainment</option><option>Health</option><option>Savings</option><option>Other</option></select>
+      </div>
+      <div class="form-group"><label>Date</label><input type="date" id="exp-date"/></div>
+    </div>
+    <div class="form-row" style="justify-content:flex-end;gap:10px;">
+      <button class="btn btn-ghost" onclick="closeModal('add-expense')">Cancel</button>
+      <button class="btn btn-primary" onclick="addExpense()"><i class="ti ti-check"></i> Add Expense</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-add-goal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">New Savings Goal <button class="modal-close" onclick="closeModal('add-goal')"><i class="ti ti-x"></i></button></div>
+    <div class="form-group" style="margin-bottom:12px;"><label>Goal Name</label><input type="text" id="goal-name" placeholder="e.g. Goa Trip, New Laptop"/></div>
+    <div class="form-row">
+      <div class="form-group"><label>Target Amount (₹)</label><input type="number" id="goal-target" placeholder="0"/></div>
+      <div class="form-group"><label>Current Saved (₹)</label><input type="number" id="goal-current" placeholder="0"/></div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px;"><label>Emoji</label><input type="text" id="goal-emoji" placeholder="🎯" maxlength="2"/></div>
+    <div class="form-row" style="justify-content:flex-end;gap:10px;">
+      <button class="btn btn-ghost" onclick="closeModal('add-goal')">Cancel</button>
+      <button class="btn btn-success" onclick="addGoal()"><i class="ti ti-check"></i> Create Goal</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-add-trip" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">New Trip ✈️ <button class="modal-close" onclick="closeModal('add-trip')"><i class="ti ti-x"></i></button></div>
+    <div class="form-group" style="margin-bottom:12px;"><label>Trip Name</label><input type="text" id="trip-name" placeholder="e.g. Goa 2025, Ooty Weekend"/></div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Add People (comma-separated)</label>
+      <input type="text" id="trip-people-input" placeholder="e.g. You, Rahul, Priya, Ankit"/>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">💡 Tip: Include yourself in the list!</div>
+    </div>
+    <div class="form-row" style="justify-content:flex-end;gap:10px;">
+      <button class="btn btn-ghost" onclick="closeModal('add-trip')">Cancel</button>
+      <button class="btn btn-primary" onclick="createTrip()"><i class="ti ti-check"></i> Create Trip</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-edit-trip" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">Edit Trip ✏️ <button class="modal-close" onclick="closeModal('edit-trip')"><i class="ti ti-x"></i></button></div>
+    <div class="form-group" style="margin-bottom:12px;"><label>Trip Name</label><input type="text" id="edit-trip-name"/></div>
+    <div class="form-group" style="margin-bottom:8px;">
+      <label>Current People <span style="color:var(--muted);font-size:10px;">(click × to remove)</span></label>
+      <div id="edit-trip-people-list" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Add More People (comma-separated)</label>
+      <input type="text" id="edit-trip-add-people" placeholder="e.g. Kiran, Sneha"/>
+    </div>
+    <div class="form-row" style="justify-content:flex-end;gap:10px;">
+      <button class="btn btn-ghost" onclick="closeModal('edit-trip')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditTrip()"><i class="ti ti-device-floppy"></i> Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-share-trip" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">Share Trip Report <button class="modal-close" onclick="closeModal('share-trip')"><i class="ti ti-x"></i></button></div>
+    <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px;">Select a person for their individual report, or Full Report for everyone.</p>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11.5px;color:var(--muted);font-weight:500;display:block;margin-bottom:8px;">Report For</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="report-person-chips"></div>
+    </div>
+    <div style="margin-bottom:14px;background:var(--surface2);border-radius:10px;padding:12px;font-size:12px;font-family:monospace;white-space:pre-wrap;color:var(--muted);max-height:220px;overflow-y:auto;" id="trip-preview"></div>
+    <div class="share-option" onclick="shareViaWhatsApp()">
+      <div class="share-icon" style="background:rgba(37,211,102,0.15);color:#25d366;"><i class="ti ti-brand-whatsapp" style="font-size:20px;"></i></div>
+      <div><div style="font-size:13.5px;font-weight:600;">WhatsApp</div><div style="font-size:11.5px;color:var(--muted);">Send to group or individual</div></div>
+    </div>
+    <div class="share-option" onclick="shareViaEmail()">
+      <div class="share-icon" style="background:rgba(66,133,244,0.15);color:#4285f4;"><i class="ti ti-mail" style="font-size:20px;"></i></div>
+      <div><div style="font-size:13.5px;font-weight:600;">Email</div><div style="font-size:11.5px;color:var(--muted);">Open email client with full report</div></div>
+    </div>
+    <div class="share-option" onclick="copyToClipboard()">
+      <div class="share-icon" style="background:rgba(91,141,238,0.15);color:var(--accent1);"><i class="ti ti-copy" style="font-size:20px;"></i></div>
+      <div><div style="font-size:13.5px;font-weight:600;">Copy to Clipboard</div><div style="font-size:11.5px;color:var(--muted);">Paste anywhere</div></div>
+    </div>
+  </div>
+</div>
+
+
+<div id="modal-set-owner" class="modal-overlay">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-title">
+      👋 Welcome to FinanceOS
+      <button class="modal-close" onclick="closeModal('set-owner')"><i class="ti ti-x"></i></button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6;">
+      Enter your name so FinanceOS can auto-detect you across all trip settlements and show your personalised dashboard.
+    </p>
+    <div class="form-group" style="margin-bottom:18px;">
+      <label>Your Name</label>
+      <input type="text" id="owner-name-input" placeholder="e.g. Kushal" style="font-size:15px;padding:12px 14px;" onkeydown="if(event.key==='Enter') saveOwner()"/>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="saveOwner()">
+      <i class="ti ti-check"></i> Set My Name & Continue
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="ti ti-check-circle"></i> <span id="toast-msg"></span></div>
+
+<script>
+// ========= STATE =========
+let state = {
+  income: 0, budget: 0,
+  expenses: [],
+  goals: [],
+  trips: {},
+  currentTrip: null,
+  ownerName: null,
+  personalSettlements: {}  // { "tripId_personName": true } = settled
+};
+
+const PERSON_COLORS = ['#5b8dee','#00e5b0','#ff5c7a','#ffb347','#a78bfa','#63e6be','#fb8c00','#f06595'];
+const CAT_COLORS = { Food:'#ff5c7a', Transport:'#00e5b0', Shopping:'#a78bfa', Entertainment:'#ffb347', Health:'#5b8dee', Hotel:'#7eb3ff', Savings:'#00e5b0', Other:'#6b7299' };
+
+// ========= INIT =========
+(function init() {
+  const saved = localStorage.getItem('financeOS_v2');
+  if (saved) { try { state = { ...state, ...JSON.parse(saved) }; } catch(e) {} }
+  document.getElementById('exp-date').value = today();
+  document.getElementById('live-date').textContent = new Date().toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+  if (state.income) document.getElementById('income-input').value = state.income;
+  if (state.budget) document.getElementById('budget-input').value = state.budget;
+  if (!state.ownerName) {
+    openModal('set-owner');
+  } else {
+    applyOwner();
+  }
+  updateAll();
+})();
+
+function applyOwner() {
+  const name = state.ownerName;
+  if (!name) return;
+  // Update avatar initials
+  const av = document.querySelector('.avatar');
+  if (av) av.textContent = name.slice(0,2).toUpperCase();
+  // Update greeting
+  const gt = document.getElementById('greeting-name');
+  if (gt) gt.textContent = name + '!';
+  // Show owner badge in nav
+  const nb = document.getElementById('nav-owner-name');
+  if (nb) nb.textContent = name;
+}
+
+function saveOwner() {
+  const val = document.getElementById('owner-name-input').value.trim();
+  if (!val) { toast('Please enter your name', 'error'); return; }
+  state.ownerName = val;
+  save();
+  closeModal('set-owner');
+  applyOwner();
+  renderOverview();
+  toast('Welcome, ' + val + '! 👋');
+}
+
+function getOwner() { return state.ownerName || null; }
+
+function save() { localStorage.setItem('financeOS_v2', JSON.stringify(state)); }
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmt(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+function pct(a, b) { return b > 0 ? Math.round((a / b) * 100) : 0; }
+
+// ========= NAVIGATION =========
+function switchSection(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'overview') renderOverview();
+  if (name === 'expenses') renderExpenseTable();
+  if (name === 'savings') renderGoals();
+  if (name === 'trip') populateTripSelect();
+  if (name === 'insights') generateInsights();
+}
+
+// ========= MODAL =========
+function openModal(name) {
+  document.getElementById('modal-' + name).classList.add('open');
+  if (name === 'share-trip') buildShareModal();
+}
+function closeModal(name) { document.getElementById('modal-' + name).classList.remove('open'); }
+
+// ========= TOAST =========
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  el.style.borderColor = type === 'error' ? 'var(--accent3)' : 'var(--accent2)';
+  el.style.color = type === 'error' ? 'var(--accent3)' : 'var(--accent2)';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ========= UPDATE ALL =========
+function updateAll() {
+  renderOverview();
+  renderExpenseTable();
+  renderGoals();
+  populateTripSelect();
+  updateStatCards();
+}
+
+// ========= EXPENSES =========
+function addExpense() {
+  const desc = document.getElementById('exp-desc').value.trim();
+  const amount = parseFloat(document.getElementById('exp-amount').value);
+  const cat = document.getElementById('exp-cat').value;
+  const date = document.getElementById('exp-date').value;
+  if (!desc || !amount || !date) { toast('Please fill all fields', 'error'); return; }
+  state.expenses.unshift({ id: Date.now(), desc, amount, cat, date });
+  save(); closeModal('add-expense');
+  document.getElementById('exp-desc').value = '';
+  document.getElementById('exp-amount').value = '';
+  updateAll(); toast('Expense added!');
+}
+
+function deleteExpense(id) {
+  state.expenses = state.expenses.filter(e => e.id !== id);
+  save(); updateAll(); toast('Deleted');
+}
+
+function renderExpenseTable() {
+  const filter = document.getElementById('filter-cat')?.value || '';
+  const data = filter ? state.expenses.filter(e => e.cat === filter) : state.expenses;
+  const tb = document.getElementById('expense-tbody');
+  if (!tb) return;
+  if (!data.length) {
+    tb.innerHTML = '<tr><td colspan="5"><div class="empty"><i class="ti ti-receipt"></i>No expenses found</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = data.map(e => `
+    <tr>
+      <td style="color:var(--muted);font-size:12px;">${e.date}</td>
+      <td>${e.desc}</td>
+      <td><span class="badge badge-${e.cat.toLowerCase()}">${e.cat}</span></td>
+      <td style="font-weight:700;color:var(--accent3);">${fmt(e.amount)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteExpense(${e.id})"><i class="ti ti-trash"></i></button></td>
+    </tr>`).join('');
+  updateExpenseStats();
+}
+
+function updateExpenseStats() {
+  const now = new Date();
+  const monthExp = state.expenses.filter(e => {
+    const d = new Date(e.date); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const total = monthExp.reduce((s, e) => s + e.amount, 0);
+  const cats = {};
+  monthExp.forEach(e => { cats[e.cat] = (cats[e.cat] || 0) + e.amount; });
+  const topCat = Object.entries(cats).sort((a, b) => b[1] - a[1])[0];
+  const days = now.getDate();
+  if (document.getElementById('exp-month')) document.getElementById('exp-month').textContent = fmt(total);
+  if (document.getElementById('exp-top-cat')) document.getElementById('exp-top-cat').textContent = topCat ? topCat[0] : '—';
+  if (document.getElementById('exp-count')) document.getElementById('exp-count').textContent = monthExp.length;
+  if (document.getElementById('exp-daily')) document.getElementById('exp-daily').textContent = fmt(Math.round(total / days));
+}
+
+// ========= SAVINGS =========
+function saveIncome() {
+  state.income = parseFloat(document.getElementById('income-input').value) || 0;
+  state.budget = parseFloat(document.getElementById('budget-input').value) || 0;
+  save(); updateAll(); toast('Income updated!');
+}
+
+function addGoal() {
+  const name = document.getElementById('goal-name').value.trim();
+  const target = parseFloat(document.getElementById('goal-target').value);
+  const current = parseFloat(document.getElementById('goal-current').value) || 0;
+  const emoji = document.getElementById('goal-emoji').value || '🎯';
+  if (!name || !target) { toast('Please fill all fields', 'error'); return; }
+  state.goals.push({ id: Date.now(), name, target, current, emoji });
+  save(); closeModal('add-goal'); renderGoals(); updateAll(); toast('Goal created!');
+}
+
+function addToGoal(id, amount) {
+  const g = state.goals.find(g => g.id === id);
+  if (!g || !amount) return;
+  g.current = Math.min(g.current + amount, g.target);
+  save(); renderGoals(); updateAll(); toast('Savings updated!');
+}
+
+function deleteGoal(id) {
+  state.goals = state.goals.filter(g => g.id !== id);
+  save(); renderGoals(); updateAll(); toast('Goal deleted');
+}
+
+function renderGoals() {
+  const el = document.getElementById('goals-list');
+  if (!el) return;
+  if (!state.goals.length) {
+    el.innerHTML = '<div class="empty"><i class="ti ti-target"></i>No goals yet. Create your first!</div>';
+    return;
+  }
+  el.innerHTML = state.goals.map(g => {
+    const p = pct(g.current, g.target);
+    const color = p >= 75 ? '#00e5b0' : p >= 40 ? '#ffb347' : '#5b8dee';
+    return `
+    <div class="goal-item">
+      <div class="goal-header">
+        <span class="goal-name">${g.emoji} ${g.name}</span>
+        <span class="goal-amount">${fmt(g.current)} / ${fmt(g.target)} (${p}%)</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${color};"></div></div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <input type="number" id="goal-add-${g.id}" placeholder="Add ₹" style="width:100px;padding:5px 8px;font-size:12px;"/>
+        <button class="btn btn-success btn-sm" onclick="addToGoal(${g.id}, parseFloat(document.getElementById('goal-add-${g.id}').value)||0)"><i class="ti ti-plus"></i> Add</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteGoal(${g.id})"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+  updateSavingsStats();
+}
+
+function updateSavingsStats() {
+  const total = state.goals.reduce((s, g) => s + g.current, 0);
+  const avgs = state.goals.length ? Math.round(state.goals.reduce((s, g) => s + pct(g.current, g.target), 0) / state.goals.length) : 0;
+  const nearest = [...state.goals].sort((a, b) => pct(b.current, b.target) - pct(a.current, a.target))[0];
+  if (document.getElementById('sav-total')) document.getElementById('sav-total').textContent = fmt(total);
+  if (document.getElementById('sav-goals-count')) document.getElementById('sav-goals-count').textContent = state.goals.length;
+  if (document.getElementById('sav-nearest')) document.getElementById('sav-nearest').textContent = nearest ? nearest.emoji + ' ' + nearest.name : '—';
+  if (document.getElementById('sav-avg')) document.getElementById('sav-avg').textContent = avgs + '%';
+}
+
+// ========= TRIPS =========
+function createTrip() {
+  const name = document.getElementById('trip-name').value.trim();
+  const peopleRaw = document.getElementById('trip-people-input').value.trim();
+  if (!name || !peopleRaw) { toast('Fill all fields', 'error'); return; }
+  const people = peopleRaw.split(',').map(p => p.trim()).filter(Boolean);
+  if (people.length < 1) { toast('Add at least 1 person', 'error'); return; }
+  const id = 'trip_' + Date.now();
+  state.trips[id] = { id, name, people, expenses: [] };
+  save(); closeModal('add-trip');
+  document.getElementById('trip-name').value = '';
+  document.getElementById('trip-people-input').value = '';
+  populateTripSelect();
+  document.getElementById('trip-select').value = id;
+  loadTrip(); toast('Trip created! 🎉');
+}
+
+function populateTripSelect() {
+  const sel = document.getElementById('trip-select');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— Choose a Trip —</option>' +
+    Object.values(state.trips).map(t => `<option value="${t.id}">${t.name} (${t.people.length} people)</option>`).join('');
+  if (cur) sel.value = cur;
+}
+
+function loadTrip() {
+  const id = document.getElementById('trip-select').value;
+  state.currentTrip = id || null;
+  document.getElementById('trip-content').style.display = id ? 'block' : 'none';
+  document.getElementById('no-trip-msg').style.display = id ? 'none' : 'block';
+  if (id) renderTripView();
+}
+
+function deleteCurrentTrip() {
+  if (!state.currentTrip) { toast('Select a trip first', 'error'); return; }
+  delete state.trips[state.currentTrip];
+  state.currentTrip = null;
+  save(); populateTripSelect(); loadTrip(); toast('Trip deleted');
+}
+
+function renderTripView() {
+  const trip = state.trips[state.currentTrip];
+  if (!trip) return;
+
+  // Paid-by select
+  const pb = document.getElementById('trip-exp-paidby');
+  pb.innerHTML = trip.people.map(p => `<option>${p}</option>`).join('');
+
+  // Split chips — all selected by default
+  const sp = document.getElementById('trip-split-people');
+  sp.innerHTML = trip.people.map((p, i) => `
+    <span class="person-chip selected" id="chip-${i}" onclick="toggleChip(${i})">
+      <span class="dot" style="background:${PERSON_COLORS[i % PERSON_COLORS.length]}"></span>${p}
+    </span>`).join('');
+
+  // Stats (use only unsettled for per-person calc)
+  const allTotal = trip.expenses.reduce((s, e) => s + e.amount, 0);
+  document.getElementById('trip-total').textContent = fmt(allTotal);
+  document.getElementById('trip-people-count').textContent = trip.people.length;
+  document.getElementById('trip-per-person').textContent = trip.people.length ? fmt(Math.round(allTotal / trip.people.length)) : '₹0';
+  document.getElementById('trip-exp-count').textContent = trip.expenses.length;
+
+  renderTripExpenses();
+  renderSettlement();
+  renderTripChart();
+}
+
+function toggleChip(i) {
+  document.getElementById('chip-' + i).classList.toggle('selected');
+}
+
+// "All" button — selects all people including the payer
+function selectAllPeople() {
+  const trip = state.trips[state.currentTrip];
+  if (!trip) return;
+  trip.people.forEach((_, i) => {
+    const chip = document.getElementById('chip-' + i);
+    if (chip) chip.classList.add('selected');
+  });
+  toast('All ' + trip.people.length + ' people selected');
+}
+
+function getSelectedPeople() {
+  const trip = state.trips[state.currentTrip];
+  return trip.people.filter((_, i) => document.getElementById('chip-' + i)?.classList.contains('selected'));
+}
+
+function addTripExpense() {
+  const trip = state.trips[state.currentTrip];
+  if (!trip) return;
+  const desc = document.getElementById('trip-exp-desc').value.trim();
+  const amount = parseFloat(document.getElementById('trip-exp-amount').value);
+  const paidBy = document.getElementById('trip-exp-paidby').value;
+  const cat = document.getElementById('trip-exp-cat').value;
+  const splitAmong = getSelectedPeople();
+  if (!desc || !amount || !splitAmong.length) { toast('Fill all fields & select people to split', 'error'); return; }
+  trip.expenses.unshift({ id: Date.now(), desc, amount, paidBy, splitAmong, cat, settled: false });
+  save();
+  document.getElementById('trip-exp-desc').value = '';
+  document.getElementById('trip-exp-amount').value = '';
+  renderTripView(); toast('Expense added!');
+}
+
+function deleteTripExpense(id) {
+  const trip = state.trips[state.currentTrip];
+  trip.expenses = trip.expenses.filter(e => e.id !== id);
+  save(); renderTripView(); toast('Deleted');
+}
+
+function toggleSettled(id) {
+  const trip = state.trips[state.currentTrip];
+  const exp = trip.expenses.find(e => e.id === id);
+  if (!exp) return;
+  exp.settled = !exp.settled;
+  save(); renderTripExpenses(); renderSettlement(); renderMySettlements();
+  toast(exp.settled ? '✓ Marked as settled' : 'Marked as unsettled');
+  updateStatCards();
+}
+
+function renderTripExpenses() {
+  const trip = state.trips[state.currentTrip];
+  const tb = document.getElementById('trip-exp-tbody');
+  if (!trip.expenses.length) {
+    tb.innerHTML = '<tr><td colspan="6"><div class="empty"><i class="ti ti-receipt"></i>No expenses yet</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = trip.expenses.map(e => {
+    const settled = e.settled || false;
+    const share = Math.round(e.amount / e.splitAmong.length);
+    return `
+    <tr class="${settled ? 'settled-row' : ''}">
+      <td>
+        <div style="font-weight:600;">${e.desc}</div>
+        <span class="badge badge-${e.cat.toLowerCase()}" style="font-size:10px;margin-top:2px;">${e.cat}</span>
+        ${settled ? '<span style="font-size:10px;color:var(--accent2);font-weight:600;margin-left:4px;">✓ Settled</span>' : ''}
+      </td>
+      <td>
+        <div style="font-weight:700;color:${settled ? 'var(--muted)' : 'var(--accent3)'};">${fmt(e.amount)}</div>
+        <div style="font-size:10.5px;color:var(--muted);">${fmt(share)}/person</div>
+      </td>
+      <td style="font-weight:600;">${e.paidBy}</td>
+      <td style="font-size:11.5px;color:var(--muted);max-width:150px;">${e.splitAmong.join(', ')}</td>
+      <td>
+        <button class="btn btn-sm ${settled ? 'btn-ghost' : 'btn-success'}" onclick="toggleSettled(${e.id})" style="font-size:11px;padding:4px 10px;">
+          ${settled ? '<i class="ti ti-rotate-clockwise"></i> Unsettle' : '<i class="ti ti-check"></i> Settle'}
+        </button>
+      </td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteTripExpense(${e.id})"><i class="ti ti-trash"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ========= BALANCE COMPUTATION =========
+// Only unsettled expenses count toward settlement.
+// We track PAIRWISE debts: for each expense, every non-payer in splitAmong
+// owes the payer their share directly. Then we net bilateral pairs.
+function computeBalances(trip) {
+  // pairDebt[debtor][creditor] = raw amount owed before netting
+  const pairDebt = {};
+  trip.people.forEach(a => {
+    pairDebt[a] = {};
+    trip.people.forEach(b => { pairDebt[a][b] = 0; });
+  });
+
+  trip.expenses.filter(e => !e.settled).forEach(e => {
+    if (!e.splitAmong || !e.splitAmong.length) return;
+    const share = e.amount / e.splitAmong.length;
+    e.splitAmong.forEach(p => {
+      if (p === e.paidBy) return; // payer doesn't owe themselves
+      if (pairDebt[p] && pairDebt[p][e.paidBy] !== undefined) {
+        pairDebt[p][e.paidBy] += share;
+      }
+    });
+  });
+
+  // Net bilateral: if A owes B 500 and B owes A 200, result is A owes B 300
+  const netDebts = []; // { from, to, amount }
+  const processed = new Set();
+  trip.people.forEach(a => {
+    trip.people.forEach(b => {
+      if (a === b) return;
+      const key = [a, b].sort().join('|');
+      if (processed.has(key)) return;
+      processed.add(key);
+      const ab = pairDebt[a][b] || 0;
+      const ba = pairDebt[b][a] || 0;
+      const net = ab - ba;
+      if (net > 0.5)       netDebts.push({ from: a, to: b, amount: Math.round(net) });
+      else if (net < -0.5) netDebts.push({ from: b, to: a, amount: Math.round(-net) });
+    });
+  });
+
+  // Derive per-person net balance from the netted debts
+  const balances = {};
+  trip.people.forEach(p => { balances[p] = 0; });
+  netDebts.forEach(d => {
+    balances[d.to]   += d.amount;  // creditor gets back
+    balances[d.from] -= d.amount;  // debtor owes
+  });
+
+  return { balances, netDebts };
+}
+
+function renderSettlement() {
+  const trip = state.trips[state.currentTrip];
+  const el = document.getElementById('settlement-list');
+  if (!el) return;
+  const { balances, netDebts } = computeBalances(trip);
+
+  const hasActivity = Object.values(balances).some(b => Math.abs(b) >= 1);
+  if (!hasActivity) {
+    el.innerHTML = '<div class="empty" style="padding:20px;"><i class="ti ti-check-circle" style="font-size:28px;color:var(--accent2);opacity:1;margin-bottom:6px;"></i><div style="color:var(--accent2);font-weight:600;">All settled up!</div></div>';
+    document.getElementById('ov-trip-dues').textContent = '₹0';
+    return;
+  }
+
+  el.innerHTML = trip.people.map((p, i) => {
+    const b = Math.round(balances[p] || 0);
+    if (Math.abs(b) < 1) return `
+      <div class="split-card" style="opacity:0.6;">
+        <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+          <span class="split-name" style="color:${PERSON_COLORS[i % PERSON_COLORS.length]}">${p}</span>
+          <span style="font-size:12px;color:var(--accent2);">✓ Settled</span>
+        </div>
+      </div>`;
+
+    // Who owes this person (creditor view)
+    const owedBy = netDebts.filter(d => d.to === p);
+    // Who this person owes (debtor view)
+    const owesTo = netDebts.filter(d => d.from === p);
+
+    return `
+    <div class="split-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:8px;">
+        <span class="split-name" style="color:${PERSON_COLORS[i % PERSON_COLORS.length]}">${p}</span>
+        <div style="text-align:right;">
+          ${b > 0 ? `<div style="font-size:10.5px;color:var(--muted);">Gets back</div><div class="split-amount gets">${fmt(b)}</div>` : `<div style="font-size:10.5px;color:var(--muted);">Owes total</div><div class="split-amount owes">${fmt(Math.abs(b))}</div>`}
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:8px;">
+        ${b > 0 && owedBy.length ? owedBy.map(d => `
+          <div class="net-row">
+            <span style="color:var(--muted);">← <b style="color:var(--text);">${d.from}</b> owes you</span>
+            <span style="color:var(--accent2);font-weight:700;">${fmt(d.amount)}</span>
+          </div>`).join('') : ''}
+        ${b < 0 && owesTo.length ? owesTo.map(d => `
+          <div class="net-row">
+            <span style="color:var(--muted);">→ Pay <b style="color:var(--text);">${d.to}</b></span>
+            <span style="color:var(--accent3);font-weight:700;">${fmt(d.amount)}</span>
+          </div>`).join('') : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Trip dues for overview card = total money that still needs to move
+  const totalDues = netDebts.reduce((s, d) => s + d.amount, 0);
+  if (document.getElementById('ov-trip-dues')) document.getElementById('ov-trip-dues').textContent = fmt(totalDues);
+}
+
+// ========= EDIT TRIP =========
+function openEditTrip() {
+  if (!state.currentTrip) { toast('Select a trip first', 'error'); return; }
+  const trip = state.trips[state.currentTrip];
+  document.getElementById('edit-trip-name').value = trip.name;
+  document.getElementById('edit-trip-add-people').value = '';
+  refreshEditTripPeople();
+  openModal('edit-trip');
+}
+
+function refreshEditTripPeople() {
+  const trip = state.trips[state.currentTrip];
+  const listEl = document.getElementById('edit-trip-people-list');
+  listEl.innerHTML = trip.people.map((p, i) => `
+    <span class="person-chip" style="border-color:${PERSON_COLORS[i % PERSON_COLORS.length]}33;">
+      <span class="dot" style="background:${PERSON_COLORS[i % PERSON_COLORS.length]}"></span>
+      ${p}
+      <span onclick="removePersonFromEdit('${p.replace(/'/g,'\\\'')}')" style="margin-left:4px;cursor:pointer;color:var(--accent3);font-size:15px;font-weight:700;line-height:1;">×</span>
+    </span>`).join('');
+}
+
+function removePersonFromEdit(name) {
+  const trip = state.trips[state.currentTrip];
+  if (trip.people.length <= 1) { toast("Can't remove the last person", 'error'); return; }
+  trip.people = trip.people.filter(p => p !== name);
+  save();
+  refreshEditTripPeople();
+}
+
+function saveEditTrip() {
+  const trip = state.trips[state.currentTrip];
+  const newName = document.getElementById('edit-trip-name').value.trim();
+  const addRaw = document.getElementById('edit-trip-add-people').value.trim();
+  if (!newName) { toast('Trip name cannot be empty', 'error'); return; }
+  trip.name = newName;
+  if (addRaw) {
+    const newPeople = addRaw.split(',').map(p => p.trim()).filter(p => p && !trip.people.includes(p));
+    trip.people = [...trip.people, ...newPeople];
+  }
+  save(); closeModal('edit-trip');
+  populateTripSelect();
+  document.getElementById('trip-select').value = state.currentTrip;
+  renderTripView(); toast('Trip updated!');
+}
+
+// ========= SHARE / REPORT =========
+let reportPerson = 'ALL';
+
+function buildShareModal() {
+  const trip = state.trips[state.currentTrip];
+  if (!trip) { toast('Select a trip first', 'error'); return; }
+  reportPerson = 'ALL';
+  const chips = document.getElementById('report-person-chips');
+  chips.innerHTML = `
+    <span class="person-chip selected" id="rchip-ALL" onclick="selectReportPerson('ALL', -1)">
+      <i class="ti ti-users" style="font-size:12px;"></i> Full Report
+    </span>` +
+    trip.people.map((p, i) => `
+      <span class="person-chip" id="rchip-${i}" onclick="selectReportPerson('${p.replace(/'/g,'\\\'')}',${ i})">
+        <span class="dot" style="background:${PERSON_COLORS[i % PERSON_COLORS.length]}"></span>${p}
+      </span>`).join('');
+  buildSharePreviewAndRender();
+}
+
+function selectReportPerson(name, idx) {
+  reportPerson = name;
+  document.querySelectorAll('#report-person-chips .person-chip').forEach(c => c.classList.remove('selected'));
+  const target = name === 'ALL' ? document.getElementById('rchip-ALL') : document.getElementById('rchip-' + idx);
+  if (target) target.classList.add('selected');
+  buildSharePreviewAndRender();
+}
+
+function buildSharePreview() {
+  const trip = state.trips[state.currentTrip];
+  if (!trip) return '';
+  const { balances, netDebts } = computeBalances(trip);
+  const unsettled = trip.expenses.filter(e => !e.settled);
+  const total = unsettled.reduce((s, e) => s + e.amount, 0);
+
+  if (reportPerson !== 'ALL') {
+    return buildPersonReport(trip, reportPerson, balances, netDebts, unsettled);
+  }
+  return buildFullReport(trip, balances, netDebts, unsettled, total);
+}
+
+function buildPersonReport(trip, person, balances, netDebts, unsettled) {
+  const b = Math.round(balances[person] || 0);
+  let msg = `📋 TRIP REPORT FOR: ${person.toUpperCase()}\n`;
+  msg += `🌍 Trip: ${trip.name}\n`;
+  msg += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+  if (b > 0) {
+    msg += `💚 YOU GET BACK: ${fmt(b)}\n\n`;
+    const owedBy = netDebts.filter(d => d.to === person);
+    if (owedBy.length) {
+      msg += `WHO OWES YOU:\n`;
+      owedBy.forEach(d => { msg += `  • ${d.from} → pay you ${fmt(d.amount)}\n`; });
+    }
+  } else if (b < 0) {
+    msg += `🔴 YOU OWE TOTAL: ${fmt(Math.abs(b))}\n\n`;
+    const owesTo = netDebts.filter(d => d.from === person);
+    if (owesTo.length) {
+      msg += `YOU NEED TO PAY:\n`;
+      owesTo.forEach(d => { msg += `  • Pay ${d.to}: ${fmt(d.amount)}\n`; });
+    }
+  } else {
+    msg += `✅ YOU ARE ALL SETTLED UP!\n`;
+  }
+
+  const myExpenses = unsettled.filter(e => e.paidBy === person || e.splitAmong.includes(person));
+  if (myExpenses.length) {
+    msg += `\n📊 YOUR PAYMENT SUMMARY:\n`;
+    myExpenses.forEach(e => {
+      const share = Math.round(e.amount / e.splitAmong.length);
+      const role = e.paidBy === person ? `paid ${fmt(e.amount)} (your share: ${fmt(share)})` : `your share ${fmt(share)} of ${fmt(e.amount)}`;
+      msg += `  • ${e.desc}: ${role}\n`;
+    });
+  }
+
+  msg += `\n📱 Generated by FinanceOS`;
+  return msg;
+}
+
+function buildFullReport(trip, balances, netDebts, unsettled, total) {
+  let msg = `🌟 FULL TRIP REPORT: ${trip.name}\n`;
+  msg += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+  msg += `💰 Total (unsettled): ${fmt(total)}\n`;
+  msg += `👥 People: ${trip.people.join(', ')}\n\n`;
+
+  trip.people.forEach(p => {
+    const b = Math.round(balances[p] || 0);
+    const owedBy = netDebts.filter(d => d.to === p);
+    const owesTo = netDebts.filter(d => d.from === p);
+    msg += `👤 ${p.toUpperCase()}\n`;
+    if (b > 0) {
+      msg += `   💚 Gets back: ${fmt(b)}\n`;
+      owedBy.forEach(d => { msg += `   ← ${d.from} owes ${fmt(d.amount)}\n`; });
+    } else if (b < 0) {
+      msg += `   🔴 Owes total: ${fmt(Math.abs(b))}\n`;
+      owesTo.forEach(d => { msg += `   → Pay ${d.to}: ${fmt(d.amount)}\n`; });
+    } else {
+      msg += `   ✅ Settled up\n`;
+    }
+    msg += `\n`;
+  });
+
+  if (unsettled.length) {
+    msg += `📋 TRIP EXPENSES SUMMARY:\n`;
+    unsettled.forEach(e => {
+      const share = Math.round(e.amount / e.splitAmong.length);
+      msg += `• ${e.desc} — ${fmt(e.amount)} paid by ${e.paidBy}\n`;
+      msg += `  Split ${e.splitAmong.length} ways (${fmt(share)}/person) among: ${e.splitAmong.join(', ')}\n`;
+    });
+  }
+
+  msg += `\n📱 Generated by FinanceOS`;
+  return msg;
+}
+
+function buildSharePreviewAndRender() {
+  const msg = buildSharePreview();
+  document.getElementById('trip-preview').textContent = msg;
+  return msg;
+}
+
+function shareViaWhatsApp() {
+  const msg = buildSharePreviewAndRender();
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  closeModal('share-trip');
+}
+
+function shareViaEmail() {
+  const trip = state.trips[state.currentTrip];
+  const msg = buildSharePreviewAndRender();
+  const subject = `Trip Expenses: ${trip?.name || 'Trip Summary'} — ${reportPerson === 'ALL' ? 'Full Report' : reportPerson}`;
+  window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`, '_blank');
+  closeModal('share-trip');
+}
+
+function copyToClipboard() {
+  const msg = buildSharePreviewAndRender();
+  navigator.clipboard.writeText(msg).then(() => { toast('Copied to clipboard!'); closeModal('share-trip'); });
+}
+
+// ========= TRIP CHART =========
+let tripChartInst = null;
+function renderTripChart() {
+  setTimeout(() => {
+    const trip = state.trips[state.currentTrip];
+    if (!trip) return;
+    const cats = {};
+    trip.expenses.forEach(e => { cats[e.cat] = (cats[e.cat] || 0) + e.amount; });
+    const labels = Object.keys(cats);
+    const data = Object.values(cats);
+    const ctx = document.getElementById('tripCatChart');
+    if (!ctx) return;
+    if (tripChartInst) { tripChartInst.destroy(); tripChartInst = null; }
+    if (!labels.length) return;
+    tripChartInst = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data, backgroundColor: labels.map(l => CAT_COLORS[l] || '#888'), borderWidth: 0, hoverOffset: 6 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${fmt(ctx.raw)}` } } } }
+    });
+    const total = data.reduce((s, v) => s + v, 0);
+    const leg = document.getElementById('trip-cat-legend');
+    if (leg) leg.innerHTML = labels.map((l, i) => `<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);"><span style="width:8px;height:8px;border-radius:2px;background:${CAT_COLORS[l]||'#888'};"></span>${l} ${total?Math.round(data[i]/total*100):0}%</span>`).join('');
+  }, 50);
+}
+
+
+// ========= MY SETTLEMENTS (Overview) =========
+function renderMySettlements() {
+  var el = document.getElementById('my-settlements-panel');
+  if (!el) return;
+  var owner = getOwner();
+  if (!owner) {
+    el.innerHTML = '<div class="empty" style="padding:20px;"><i class="ti ti-user"></i>Set your name to track settlements</div>';
+    return;
+  }
+
+  var iGive = [];
+  var iReceive = [];
+
+  Object.values(state.trips).forEach(function(trip) {
+    if (!trip.people.includes(owner)) return;
+    var result = computeBalances(trip);
+    result.netDebts.forEach(function(d) {
+      var key = trip.id + '|' + d.from + '|' + d.to;
+      var settled = !!(state.personalSettlements && state.personalSettlements[key]);
+      if (d.from === owner) {
+        iGive.push({ person: d.to, amount: d.amount, tripName: trip.name, tripId: trip.id, key: key, settled: settled });
+      } else if (d.to === owner) {
+        iReceive.push({ person: d.from, amount: d.amount, tripName: trip.name, tripId: trip.id, key: key, settled: settled });
+      }
+    });
+  });
+
+  if (!iGive.length && !iReceive.length) {
+    el.innerHTML = '<div class="empty" style="padding:20px;"><i class="ti ti-check-circle" style="color:var(--accent2);opacity:1;font-size:30px;"></i><div style="color:var(--accent2);font-weight:600;margin-top:6px;">All clear! No pending settlements.</div></div>';
+    return;
+  }
+
+  var receiveByPerson = {};
+  iReceive.forEach(function(r) {
+    if (!receiveByPerson[r.person]) receiveByPerson[r.person] = [];
+    receiveByPerson[r.person].push(r);
+  });
+  var giveByPerson = {};
+  iGive.forEach(function(g) {
+    if (!giveByPerson[g.person]) giveByPerson[g.person] = [];
+    giveByPerson[g.person].push(g);
+  });
+
+  var h = '';
+
+  // People who owe me
+  var recKeys = Object.keys(receiveByPerson);
+  if (recKeys.length) {
+    h += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin-bottom:10px;">💚 People who owe you</div>';
+    recKeys.forEach(function(person, pi) {
+      var entries = receiveByPerson[person];
+      var unsettledEntries = entries.filter(function(e) { return !e.settled; });
+      var totalUnsettled = unsettledEntries.reduce(function(s,e) { return s + e.amount; }, 0);
+      var allDone = unsettledEntries.length === 0;
+      var color = PERSON_COLORS[pi % PERSON_COLORS.length];
+      var borderCol = allDone ? 'rgba(0,229,176,0.2)' : 'var(--border)';
+
+      h += '<div style="background:var(--surface2);border:1px solid ' + borderCol + ';border-radius:12px;padding:14px;margin-bottom:10px;">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">';
+      h += '<div style="display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;border-radius:50%;background:' + color + ';display:inline-block;"></span>';
+      h += '<span style="font-weight:700;font-size:14px;font-family:var(--font2);">' + person + '</span></div>';
+      h += '<div style="text-align:right;">';
+      if (allDone) {
+        h += '<span style="font-size:12px;color:var(--accent2);font-weight:600;">✓ All Received</span>';
+      } else {
+        h += '<span style="font-size:11px;color:var(--muted);">Pending</span><br>';
+        h += '<span style="font-size:17px;font-weight:800;font-family:var(--font2);color:var(--accent2);">' + fmt(totalUnsettled) + '</span>';
+      }
+      h += '</div></div>';
+      h += '<div style="display:flex;flex-direction:column;gap:6px;">';
+      entries.forEach(function(e) {
+        var eBorder = e.settled ? 'rgba(0,229,176,0.15)' : 'var(--border)';
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--surface);border-radius:8px;border:1px solid ' + eBorder + ';">';
+        h += '<div>';
+        h += '<div style="font-size:12.5px;font-weight:600;' + (e.settled ? 'color:var(--muted);text-decoration:line-through;' : '') + '">' + fmt(e.amount) + '</div>';
+        h += '<div style="font-size:10.5px;color:var(--muted);">from <i>' + e.tripName + '</i></div>';
+        h += '</div>';
+        if (e.settled) {
+          h += '<span style="font-size:11px;color:var(--accent2);font-weight:600;">✓ Received</span>';
+        } else {
+          h += '<button class="btn btn-sm" onclick="markPersonalSettlement(\'' + e.key + '\')" style="background:rgba(0,229,176,0.12);color:var(--accent2);border:1px solid rgba(0,229,176,0.25);font-size:11px;padding:4px 10px;"><i class="ti ti-check"></i> Mark Received</button>';
+        }
+        h += '</div>';
+      });
+      h += '</div></div>';
+    });
+  }
+
+  // People I owe
+  var giveKeys = Object.keys(giveByPerson);
+  if (giveKeys.length) {
+    h += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent3);margin-bottom:10px;margin-top:4px;">🔴 You owe these people</div>';
+    giveKeys.forEach(function(person, pi) {
+      var entries = giveByPerson[person];
+      var unsettledEntries = entries.filter(function(e) { return !e.settled; });
+      var totalUnsettled = unsettledEntries.reduce(function(s,e) { return s + e.amount; }, 0);
+      var allDone = unsettledEntries.length === 0;
+      var color = PERSON_COLORS[(pi + 3) % PERSON_COLORS.length];
+      var borderCol = allDone ? 'rgba(0,229,176,0.2)' : 'rgba(255,92,122,0.15)';
+
+      h += '<div style="background:var(--surface2);border:1px solid ' + borderCol + ';border-radius:12px;padding:14px;margin-bottom:10px;">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">';
+      h += '<div style="display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;border-radius:50%;background:' + color + ';display:inline-block;"></span>';
+      h += '<span style="font-weight:700;font-size:14px;font-family:var(--font2);">' + person + '</span></div>';
+      h += '<div style="text-align:right;">';
+      if (allDone) {
+        h += '<span style="font-size:12px;color:var(--accent2);font-weight:600;">✓ All Paid</span>';
+      } else {
+        h += '<span style="font-size:11px;color:var(--muted);">You owe</span><br>';
+        h += '<span style="font-size:17px;font-weight:800;font-family:var(--font2);color:var(--accent3);">' + fmt(totalUnsettled) + '</span>';
+      }
+      h += '</div></div>';
+      h += '<div style="display:flex;flex-direction:column;gap:6px;">';
+      entries.forEach(function(e) {
+        var eBorder = e.settled ? 'rgba(0,229,176,0.15)' : 'var(--border)';
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--surface);border-radius:8px;border:1px solid ' + eBorder + ';">';
+        h += '<div>';
+        h += '<div style="font-size:12.5px;font-weight:600;' + (e.settled ? 'color:var(--muted);text-decoration:line-through;' : '') + '">' + fmt(e.amount) + '</div>';
+        h += '<div style="font-size:10.5px;color:var(--muted);">to <b>' + person + '</b> · <i>' + e.tripName + '</i></div>';
+        h += '</div>';
+        if (e.settled) {
+          h += '<span style="font-size:11px;color:var(--accent2);font-weight:600;">✓ Paid</span>';
+        } else {
+          h += '<button class="btn btn-sm" onclick="markPersonalSettlement(\'' + e.key + '\')" style="background:rgba(255,92,122,0.1);color:var(--accent3);border:1px solid rgba(255,92,122,0.25);font-size:11px;padding:4px 10px;"><i class="ti ti-check"></i> Mark Paid</button>';
+        }
+        h += '</div>';
+      });
+      h += '</div></div>';
+    });
+  }
+
+  el.innerHTML = h;
+
+  // Update stat card
+  var totalIReceive = 0, totalIGive = 0;
+  iReceive.filter(function(e) { return !e.settled; }).forEach(function(e) { totalIReceive += e.amount; });
+  iGive.filter(function(e) { return !e.settled; }).forEach(function(e) { totalIGive += e.amount; });
+  var netCard = document.getElementById('ov-trip-dues');
+  if (netCard) netCard.textContent = totalIReceive > 0 ? fmt(totalIReceive) : fmt(totalIGive);
+  var netLabel = document.getElementById('ov-trip-dues-label');
+  if (netLabel) netLabel.textContent = totalIReceive > totalIGive ? 'You get back' : totalIGive > 0 ? 'You owe' : 'All settled';
+  var netSub = document.getElementById('ov-trip-dues-sub');
+  if (netSub) {
+    netSub.textContent = totalIReceive > totalIGive ? 'Across all trips' : totalIGive > 0 ? 'Pending payment' : 'No dues!';
+    netSub.className = 'stat-sub ' + (totalIReceive > totalIGive ? 'up' : totalIGive > 0 ? 'down' : 'up');
+  }
+}
+
+function markPersonalSettlement(key) {
+  if (!state.personalSettlements) state.personalSettlements = {};
+  state.personalSettlements[key] = !state.personalSettlements[key];
+  save();
+  renderMySettlements();
+  toast(state.personalSettlements[key] ? 'Marked as settled ✓' : 'Marked as pending');
+}
+
+
+// ========= OVERVIEW =========
+let trendChartInst = null, catChartInst = null;
+
+function renderOverview() {
+  updateStatCards();
+  renderRecentTxns();
+  renderOverviewGoals();
+  renderTrendChart();
+  renderCatChart();
+  renderMySettlements();
+}
+
+function updateStatCards() {
+  const now = new Date();
+  const monthExp = state.expenses.filter(e => {
+    const d = new Date(e.date); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const spent = monthExp.reduce((s, e) => s + e.amount, 0);
+  const savingsTotal = state.goals.reduce((s, g) => s + g.current, 0);
+  const balance = state.income - spent;
+
+  document.getElementById('ov-income').textContent = fmt(state.income || 0);
+  document.getElementById('ov-spent').textContent = fmt(spent);
+  document.getElementById('ov-balance').textContent = fmt(balance);
+  document.getElementById('ov-savings').textContent = fmt(savingsTotal);
+
+  const budgetPct = state.budget ? Math.round((spent / state.budget) * 100) : 0;
+  document.getElementById('ov-spent-sub').textContent = state.budget ? `${budgetPct}% of budget` : 'This month';
+  document.getElementById('ov-spent-sub').className = 'stat-sub ' + (budgetPct > 80 ? 'down' : 'up');
+
+  // Trip dues handled by renderMySettlements — just ensure element exists
+}
+
+function renderRecentTxns() {
+  const el = document.getElementById('recent-txns');
+  if (!el) return;
+  const recent = state.expenses.slice(0, 5);
+  if (!recent.length) { el.innerHTML = '<div class="empty"><i class="ti ti-receipt"></i>No transactions yet. Add your first!</div>'; return; }
+  el.innerHTML = recent.map(e => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-size:13px;font-weight:600;">${e.desc}</div>
+        <div style="font-size:11px;color:var(--muted);">${e.date} · <span class="badge badge-${e.cat.toLowerCase()}" style="font-size:10px;">${e.cat}</span></div>
+      </div>
+      <div style="font-weight:700;color:var(--accent3);">${fmt(e.amount)}</div>
+    </div>`).join('');
+}
+
+function renderOverviewGoals() {
+  const el = document.getElementById('overview-goals');
+  if (!el) return;
+  if (!state.goals.length) { el.innerHTML = '<div style="font-size:13px;color:var(--muted);">No goals yet.</div>'; return; }
+  el.innerHTML = state.goals.slice(0, 3).map(g => {
+    const p = pct(g.current, g.target);
+    return `<div class="goal-item"><div class="goal-header"><span>${g.emoji} ${g.name}</span><span style="font-size:11.5px;color:var(--muted);">${p}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${p>75?'#00e5b0':p>40?'#ffb347':'#5b8dee'};"></div></div></div>`;
+  }).join('');
+}
+
+function renderTrendChart() {
+  setTimeout(() => {
+    const ctx = document.getElementById('trendChart');
+    if (!ctx) return;
+    if (trendChartInst) { trendChartInst.destroy(); trendChartInst = null; }
+    const months = [], data = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push(d.toLocaleString('default', { month: 'short' }));
+      data.push(state.expenses.filter(e => { const ed = new Date(e.date); return ed.getMonth() === d.getMonth() && ed.getFullYear() === d.getFullYear(); }).reduce((s, e) => s + e.amount, 0));
+    }
+    trendChartInst = new Chart(ctx, {
+      type: 'line',
+      data: { labels: months, datasets: [{ label: 'Spending', data, fill: true, borderColor: '#5b8dee', backgroundColor: 'rgba(91,141,238,0.08)', tension: 0.4, borderWidth: 2, pointBackgroundColor: '#5b8dee', pointRadius: 4 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#6b7299', font: { family: 'DM Sans', size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: '#6b7299', font: { family: 'DM Sans', size: 11 }, callback: v => '₹' + v.toLocaleString() }, grid: { color: 'rgba(255,255,255,0.04)' } } } }
+    });
+  }, 50);
+}
+
+function renderCatChart() {
+  setTimeout(() => {
+    const ctx = document.getElementById('catChart');
+    if (!ctx) return;
+    if (catChartInst) { catChartInst.destroy(); catChartInst = null; }
+    const cats = {};
+    state.expenses.forEach(e => { cats[e.cat] = (cats[e.cat] || 0) + e.amount; });
+    const labels = Object.keys(cats);
+    const data = Object.values(cats);
+    if (!labels.length) return;
+    catChartInst = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data, backgroundColor: labels.map(l => CAT_COLORS[l] || '#888'), borderWidth: 0, hoverOffset: 6 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${fmt(ctx.raw)}` } } } }
+    });
+    const total = data.reduce((s, v) => s + v, 0);
+    const leg = document.getElementById('cat-legend');
+    if (leg) leg.innerHTML = labels.map((l, i) => `<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);"><span style="width:8px;height:8px;border-radius:2px;background:${CAT_COLORS[l]||'#888'};"></span>${l} ${total?Math.round(data[i]/total*100):0}%</span>`).join('');
+  }, 50);
+}
+
+// ========= INSIGHTS =========
+let compChartInst = null;
+function generateInsights() {
+  const el = document.getElementById('insights-list');
+  if (!el) return;
+  const now = new Date();
+  const monthExp = state.expenses.filter(e => {
+    const d = new Date(e.date); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const spent = monthExp.reduce((s, e) => s + e.amount, 0);
+  const cats = {};
+  monthExp.forEach(e => { cats[e.cat] = (cats[e.cat] || 0) + e.amount; });
+  const topCat = Object.entries(cats).sort((a, b) => b[1] - a[1])[0];
+  const insights = [];
+
+  if (state.income && spent > state.income * 0.8)
+    insights.push({ icon: 'ti-alert-triangle', title: '⚠️ Overspending Alert', text: `You've spent ${fmt(spent)}, which is ${Math.round(spent/state.income*100)}% of your income. Consider cutting back on ${topCat?topCat[0]:'miscellaneous'} expenses.` });
+  if (topCat)
+    insights.push({ icon: 'ti-chart-pie', title: '📊 Top Spending Category', text: `Your biggest expense this month is ${topCat[0]} at ${fmt(topCat[1])}. ${topCat[1]/spent > 0.4 ? 'This is over 40% of your spending — worth reviewing.' : 'That looks reasonable.'}` });
+  if (state.goals.length) {
+    const incomplete = state.goals.filter(g => g.current < g.target);
+    if (incomplete.length)
+      insights.push({ icon: 'ti-target', title: '🎯 Savings Goals Progress', text: `You have ${incomplete.length} active goal${incomplete.length>1?'s':''}. ${state.income - spent > 0 ? `You have ${fmt(state.income - spent)} left this month — consider saving some!` : 'Keep tracking to stay on target.'}` });
+  }
+  if (Object.values(state.trips).length) {
+    const tripTotal = Object.values(state.trips).reduce((s, t) => s + t.expenses.reduce((ss, e) => ss + e.amount, 0), 0);
+    let dues = 0;
+    Object.values(state.trips).forEach(trip => {
+      const { netDebts } = computeBalances(trip);
+      dues += netDebts.reduce((s, d) => s + d.amount, 0);
+    });
+    insights.push({ icon: 'ti-plane', title: '✈️ Trip Spending', text: `You've tracked ${fmt(tripTotal)} across ${Object.values(state.trips).length} trip(s). ${dues > 0 ? `₹${dues.toLocaleString('en-IN')} still unsettled — don't forget to settle!` : 'All trips are fully settled. 🎉'}` });
+  }
+  if (!insights.length)
+    insights.push({ icon: 'ti-check', title: '✅ Looking Good!', text: `Your finances look healthy this month. Keep tracking expenses to unlock personalized insights.` });
+
+  el.innerHTML = insights.map(ins => `
+    <div class="insight-card">
+      <div class="insight-title"><i class="ti ${ins.icon}"></i>${ins.title}</div>
+      <div class="insight-text">${ins.text}</div>
+    </div>`).join('');
+
+  // Monthly comparison chart
+  setTimeout(() => {
+    const ctx = document.getElementById('compChart');
+    if (!ctx) return;
+    if (compChartInst) { compChartInst.destroy(); compChartInst = null; }
+    const months = [], incData = [], expData = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push(d.toLocaleString('default', { month: 'short' }));
+      expData.push(state.expenses.filter(e => { const ed = new Date(e.date); return ed.getMonth() === d.getMonth() && ed.getFullYear() === d.getFullYear(); }).reduce((s, e) => s + e.amount, 0));
+      incData.push(state.income);
+    }
+    compChartInst = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: months, datasets: [
+        { label: 'Income', data: incData, backgroundColor: 'rgba(0,229,176,0.5)', borderRadius: 6 },
+        { label: 'Expenses', data: expData, backgroundColor: 'rgba(255,92,122,0.5)', borderRadius: 6 }
+      ]},
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#6b7299', font: { family: 'DM Sans', size: 12 } } } }, scales: { x: { ticks: { color: '#6b7299' }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: '#6b7299', callback: v => '₹' + v.toLocaleString() }, grid: { color: 'rgba(255,255,255,0.04)' } } } }
+    });
+  }, 50);
+}
+
+// ========= MODAL CLOSE ON OVERLAY CLICK =========
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+}));
+</script>
+</body>
+</html>
